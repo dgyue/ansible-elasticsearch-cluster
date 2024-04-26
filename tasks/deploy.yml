@@ -1,0 +1,58 @@
+---
+# 拷贝ca证书到certs目录
+- name: "copy ca file"
+  copy:
+    src: elastic-stack-ca.p12
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}/config/certs/elastic-stack-ca.p12"
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 拷贝集群认证证书到certs目录
+- name: "copy ca file"
+  copy:
+    src: elastic-certificates.p12
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}/config/certs/elastic-certificates.p12"
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 拷贝程序主配置文件到config目录
+- name: "copy elasticsearch yml file"
+  template:
+    src: elasticsearch.yml.j2
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}/config/elasticsearch.yml"
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 拷贝程序jvm配置文件到config目录
+- name: "copy jvm options file"
+  template:
+    src: jvm.options.j2
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}/config/jvm.options"
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 配置程序目录所属主和所属组
+- name: "configure owner and group of the directory"
+  file:
+    path: "{{ base_directory }}/elasticsearch_{{ es_http_port }}"
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+    recurse: yes
+
+# 启动es程序
+- name: "start elasticsearch"
+  shell: sudo -u {{ es_start_user }}  {{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch -d
+
+# 添加管理用户
+- name: "create super user"
+  shell: |
+    {{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch-users useradd {{ es_cluster_super_user }} -r superuser,kibana_system<<EOF
+    {{ es_cluster_super_user_password }}
+    {{ es_cluster_super_user_password }}
+    >>EOF
+  ignore_errors: yes
+
+# 检查集群是否正常
+- name: "check cluster node"
+  debug:
+    msg: "curl http://{{ ansible_ssh_host }}:{{ es_http_port }}/_cat/nodes?v --user {{ es_cluster_super_user }}:{{ es_cluster_super_user_password }}"

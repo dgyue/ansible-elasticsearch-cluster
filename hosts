@@ -1,0 +1,4 @@
+[elasticsearch_cluster]
+elasticsearch-node1    ansible_ssh_host=159.75.202.37    es_http_port=9201    es_transport_port=9301    ansible_ssh_user="root"    ansible_ssh_pass="3qQY8fssm8@"     es_cluster_node_name="node-1"
+elasticsearch-node2    ansible_ssh_host=159.75.202.37    es_http_port=9202    es_transport_port=9302    ansible_ssh_user="root"    ansible_ssh_pass="3qQY8fssm8@"     es_cluster_node_name="node-2"
+elasticsearch-node3    ansible_ssh_host=159.75.202.37    es_http_port=9203    es_transport_port=9303    ansible_ssh_user="root"    ansible_ssh_pass="3qQY8fssm8@"     es_cluster_node_name="node-3"

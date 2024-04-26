@@ -1,0 +1,69 @@
+---
+# 创建es用户
+- name: "creat user elasticsearch"
+  user:
+    name: "{{ es_start_user }}"
+    shell: /sbin/nologin
+    create_home: no
+  ignore_errors: yes
+
+# 创建工作目录
+- name: "create work directory"
+  file:
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}"
+    state: directory
+    mode: 0755
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 拷贝es安装包
+- name: "copy es package"
+  copy:
+    src: "elasticsearch-{{ es_version }}-linux-{{ os_arch }}.tar.gz"
+    dest: "/tmp/elasticsearch-{{ es_version }}-linux-{{ os_arch }}.tar.gz"
+
+# 解压es安装包
+- name: "uncompress es package"
+  unarchive:
+    src: "/tmp/elasticsearch-{{ es_version }}-linux-{{ os_arch }}.tar.gz"
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}"
+    copy: no
+    extra_opts: --strip-components=1
+
+# 创建cert文件存放的目录
+- name: "create cert directory"
+  file:
+    dest: "{{ base_directory }}/elasticsearch_{{ es_http_port }}/config/certs"
+    state: directory
+    owner: "{{ es_start_user }}"
+    group: "{{ es_start_user }}"
+
+# 配置系统security参数
+- name: "configure system security parameters"
+  lineinfile:
+    dest: /etc/security/limits.conf
+    line: "{{ item }}"
+  with_items:
+    - "{{ es_start_user }} soft nproc 65535"
+    - "{{ es_start_user }} hard nproc 65535"
+    - "{{ es_start_user }} soft nofile 65535"
+    - "{{ es_start_user }} hard nofile 65535"
+    - "{{ es_start_user }} soft memlock unlimited"
+    - "{{ es_start_user }} hard memlock unlimited"
+
+# 配置系统max_map_count参数
+- name: "configure system max_map_count parameters"
+  shell: |
+    echo "vm.max_map_count={{ vm_system_max_map_count }}" >> /etc/sysctl.conf
+    sysctl -p
+
+# 配置关闭系统swap分区
+- name: "close system swap partition"
+  replace:
+    path: /etc/fstab
+    regexp: "^(.*) swap (.*)"
+    replace: '#\1 swap \2'
+
+# 使关闭系统swap分区立即生效
+- name: "close swap partition"
+  shell: swapoff -a

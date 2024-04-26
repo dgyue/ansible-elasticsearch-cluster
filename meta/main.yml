@@ -1,7 +1,0 @@
-info:
-  author: dgyue
-  description: Role to install Elasticsearch
-  platforms:
-    - name: CentOS
-      versions:
-        - 7.9

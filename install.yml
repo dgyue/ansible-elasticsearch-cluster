@@ -1,0 +1,20 @@
+---
+- hosts: elasticsearch_cluster
+  gather_facts: no
+  vars:
+    - base_directory: /data/app
+    - es_start_user: elasticsearch
+    - es_cluster_name: test-cluster
+    - es_cluster_hosts: 159.75.202.37,159.75.202.37,159.75.202.37
+    - es_discovery_seed_hosts_hosts: 159.75.202.37:9301,159.75.202.37:9302,159.75.202.37:9303
+    - es_cluster_initial_master_nodes: 159.75.202.37:9301,159.75.202.37:9302,159.75.202.37:9303
+    - es_bootstrap_memory_lock: true
+    - es_cluster_super_user: logadmin
+    - es_cluster_super_user_password: password
+    - es_cluster_memory_small: 1
+    - es_cluster_memory_max: 1
+    - es_version: 7.17.3
+    - os_arch: x86_64
+
+  roles:
+   - role: elasticsearch-cluster
