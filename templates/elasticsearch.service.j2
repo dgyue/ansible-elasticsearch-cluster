@@ -1,0 +1,20 @@
+[Unit]
+Description=Elasticsearch Service
+
+[Service]
+Type=forking
+User={{ es_start_user }}
+Group={{ es_start_user }}
+ExecStart={{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch -d
+ExecStop=/bin/kill -s QUIT $MAINPID
+LimitNOFILE=65535
+LimitNPROC=65535
+LimitMEMLOCK=infinity
+Restart=on-failure
+RestartSec=30s
+killMode=control-group
+killSignal=SIGTERM
+TimeoutStopSec=30s
+
+[Install]
+WantedBy=multi-user.target

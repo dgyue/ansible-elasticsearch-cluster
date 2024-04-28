@@ -39,18 +39,40 @@
     group: "{{ es_start_user }}"
     recurse: yes
 
-# 启动es程序
-#- name: "start elasticsearch"
-#  shell: sudo -u {{ es_start_user }}  {{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch -d
+# 拷贝启动文件到系统目录
+- name: "copy service start file"
+  template:
+    src: elasticsearch.service.j2
+    dest: /usr/lib/systemd/system/elasticsearch.service
+
+# 加载系统启动文件并启动程序
+- name: "load elasticsearch system file and start elasticsearch"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: elasticsearch
+
+# 拷贝启动文件到系统目录
+- name: "copy service start file"
+  template:
+    src: elasticsearch.service.j2
+    dest: /usr/lib/systemd/system/elasticsearch.service
+
+# 加载系统启动文件并启动程序
+- name: "load elasticsearch system file and start elasticsearch"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: elasticsearch
 
 # 添加管理用户
-#- name: "create super user"
-#  shell: |
-#    {{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch-users useradd {{ es_cluster_super_user }} -r superuser,kibana_system<<EOF
-#    {{ es_cluster_super_user_password }}
-#    {{ es_cluster_super_user_password }}
-#    >>EOF
-#  ignore_errors: yes
+- name: "create super user"
+  shell: |
+    {{ base_directory }}/elasticsearch_{{ es_http_port }}/bin/elasticsearch-users useradd {{ es_cluster_super_user }} -r superuser,kibana_system<<EOF
+    {{ es_cluster_super_user_password }}
+    {{ es_cluster_super_user_password }}
+    EOF
+  ignore_errors: yes
 
 # 检查集群是否正常
 #- name: "check cluster node"
