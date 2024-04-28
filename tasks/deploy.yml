@@ -74,7 +74,7 @@
     EOF
   ignore_errors: yes
 
-# 检查集群是否正常
+# 检查集群是否正常, 当前步骤需要手动在服务器执行验证
 #- name: "check cluster node"
 #  debug:
 #    msg: "curl http://{{ ansible_ssh_host }}:{{ es_http_port }}/_cat/nodes?v --user {{ es_cluster_super_user }}:{{ es_cluster_super_user_password }}"
