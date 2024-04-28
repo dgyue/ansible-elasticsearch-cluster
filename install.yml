@@ -5,9 +5,8 @@
     - base_directory: /data/app
     - es_start_user: elasticsearch
     - es_cluster_name: test-cluster
-    - es_cluster_hosts: 159.75.202.37,159.75.202.37,159.75.202.37
-    - es_discovery_seed_hosts_hosts: 159.75.202.37:9301,159.75.202.37:9302,159.75.202.37:9303
-    - es_cluster_initial_master_nodes: 159.75.202.37:9301,159.75.202.37:9302,159.75.202.37:9303
+    - es_discovery_seed_hosts_hosts: '"192.168.156.123","192.168.156.124","192.168.156.125"'
+    - es_cluster_initial_master_nodes: '"192.168.156.123","192.168.156.124","192.168.156.125"'
     - es_bootstrap_memory_lock: true
     - es_cluster_super_user: logadmin
     - es_cluster_super_user_password: password
